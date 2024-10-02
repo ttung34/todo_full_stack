@@ -7,6 +7,7 @@ class TodoModels {
   String title;
 
   bool completed;
+  
   TodoModels({
     required this.id,
     required this.title,

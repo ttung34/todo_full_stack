@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/view/update/update_todo.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/todo_model.dart';
@@ -185,41 +186,58 @@ class _TodoViewState extends State<TodoView> {
                   itemCount: _todos.length,
                   itemBuilder: (context, index) {
                     final item = _todos.elementAt(index);
-                    return GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      child: Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(
-                            color: Colors.blue,
-                            width: 1,
-                          ),
-                          borderRadius: const BorderRadius.all(
-                            Radius.circular(16),
-                          ),
-                        ),
-                        child: ListTile(
-                          title: Text(item.title),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Checkbox(
-                                value: item.completed,
-                                onChanged: (value) {
-                                  _updateTodo(item);
-                                },
+                    return Column(
+                      children: [
+                        GestureDetector(
+                          behavior: HitTestBehavior.translucent,
+                          onTap: () async {
+                            final updatedTodo = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        UpdateTodo(todo: item)));
+                            if (updatedTodo != null) {
+                              setState(() {
+                                _todos[index] = updatedTodo as TodoModels;
+                              });
+                            }
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
+                                color: Colors.blue,
+                                width: 1,
                               ),
-                              IconButton(
-                                onPressed: () {
-                                  _deleteTodo(item.id);
-                                },
-                                icon: const Icon(Icons.delete),
-                              )
-                            ],
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(16),
+                              ),
+                            ),
+                            child: ListTile(
+                              title: Text(item.title),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Checkbox(
+                                    value: item.completed,
+                                    onChanged: (value) {
+                                      _updateTodo(item);
+                                    },
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      _deleteTodo(item.id);
+                                    },
+                                    icon: const Icon(Icons.delete),
+                                  )
+                                ],
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                        const SizedBox(height: 20),
+                      ],
                     );
                   },
                 ),
